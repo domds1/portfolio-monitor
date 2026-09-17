@@ -7,6 +7,7 @@ A Python automation tool to monitor portfolio allocation from a transaction CSV,
 ## Table of Contents
 
 - [Features](#features)
+- [Project Structure](#project-structure)
 - [Prerequisites & Installation](#prerequisites--installation)
 - [Telegram Bot Setup](#telegram-bot-setup)
 - [CSV File Requirements](#csv-file-requirements)
@@ -26,6 +27,22 @@ A Python automation tool to monitor portfolio allocation from a transaction CSV,
   - **Absolute threshold**: compares fixed percentage-point deviation (for example, target 30% with a 5% absolute threshold gives a valid range of `[25% - 35%]`).
 - **Telegram notifications**: sends formatted alerts for out-of-range assets and a complete target allocation summary.
 - **Modular multi-ticker aggregation**: temporarily aggregates secondary positions into primary target assets using isolated code blocks.
+
+---
+
+## Project Structure
+
+The project has been reorganized into a small layered structure to improve maintainability and scalability:
+
+- [PortfolioMonitor.py](PortfolioMonitor.py) — minimal entrypoint for launching the monitor
+- [portfolio_monitor/config.py](portfolio_monitor/config.py) — loads runtime configuration from JSON and environment variables
+- [portfolio_monitor/orchestrator.py](portfolio_monitor/orchestrator.py) — coordinates the workflow
+- [portfolio_monitor/portfolio_loader.py](portfolio_monitor/portfolio_loader.py) — reads the CSV and calculates quantities
+- [portfolio_monitor/market_data.py](portfolio_monitor/market_data.py) — fetches market prices from Yahoo Finance
+- [portfolio_monitor/rebalance_engine.py](portfolio_monitor/rebalance_engine.py) — computes weights and threshold alerts
+- [portfolio_monitor/telegram_notifier.py](portfolio_monitor/telegram_notifier.py) — builds and sends the Telegram payload
+- [config.example.json](config.example.json) — public template for configuration
+- [config.json](config.json) — private local configuration (ignored by Git)
 
 ---
 
@@ -112,35 +129,54 @@ GOLD.MI,10,SELL
 
 ## Configuration Guide
 
-The main configuration is defined directly in `PortfolioMonitor.py`.
+The project now reads its runtime settings from a JSON configuration file and keeps the real values local.
 
-### 1. Telegram credentials
+### 1. Public example template
 
-Do not hardcode these values in the repository. Keep them in your local environment and let the script read them at runtime.
+Use the checked-in example as a starting point:
+
+- [config.example.json](config.example.json)
+
+This file is safe to commit because it contains placeholders only.
+
+### 2. Private local config
+
+Create a local file named [config.json](config.json) with your actual values. It is ignored by Git and should not be published.
+
+Example:
+
+```json
+{
+  "csv_path": "portfolio.csv",
+  "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN",
+  "telegram_chat_id": "YOUR_TELEGRAM_CHAT_ID",
+  "enable_aggregation_workaround": true,
+  "target_config": {
+    "VWCE.MI": {
+      "target_weight": 60.0,
+      "type": "RELATIVE",
+      "threshold": 20.0
+    },
+    "GOLD.MI": {
+      "target_weight": 10.0,
+      "type": "ABSOLUTE",
+      "threshold": 0.0
+    }
+  }
+}
+```
+
+### 3. Environment variables override
+
+Environment variables still work and override the JSON values if present:
 
 ```bash
 export TELEGRAM_BOT_TOKEN="123456789:ABCdefGHIjklMNOpqrsTUVwxyZ"
 export TELEGRAM_CHAT_ID="987654321"
+export CSV_PATH="portfolio.csv"
 ```
 
-### 2. Target assets and thresholds (`TARGET_CONFIG`)
-
-Define target portfolio weights and allowed deviation thresholds:
-
-```python
-TARGET_CONFIG = {
-    "VWCE.MI": {
-        "target_weight": 25.0,  # Target weight (%)
-        "type": "RELATIVE",     # Mode: RELATIVE or ABSOLUTE
-        "threshold": 20.0,      # 20% relative drift -> allowed range: [20.0% - 30.0%]
-    },
-    "GOLD.MI": {
-        "target_weight": 30.0,  # Target weight (%)
-        "type": "ABSOLUTE",     # Mode: RELATIVE or ABSOLUTE
-        "threshold": 5.0,        # 5 percentage-point drift -> allowed range: [25.0% - 35.0%]
-    },
-}
-```
+This makes it easy to keep sensitive values outside the repository while still supporting a reusable sample config.
 
 ---
 
@@ -155,19 +191,17 @@ The script includes a temporary aggregation feature that merges secondary ticker
 
 ### Disabling the workaround
 
-To disable ticker aggregation without changing the project structure, set the flag in the designated block:
+To disable ticker aggregation without changing the project structure, set the flag in the JSON config:
 
-```python
-ENABLE_AGGREGATION_WORKAROUND = False
+```json
+{
+  "enable_aggregation_workaround": false
+}
 ```
 
 ### Removing the workaround permanently
 
-To remove this feature from the source code, delete the three designated blocks in `PortfolioMonitor.py`:
-
-1. **[WORKAROUND BLOCK 1/3]**: configuration mapping (`ENABLE_AGGREGATION_WORKAROUND` and `WORKAROUND_BUNDLES`).
-2. **[WORKAROUND BLOCK 2/3]**: ticker list extension logic in `monitor_portfolio()`.
-3. **[WORKAROUND BLOCK 3/3]**: euro-value aggregation loop before alert evaluation.
+To remove this feature from the source code, delete the related config entries and the aggregation logic inside [portfolio_monitor/orchestrator.py](portfolio_monitor/orchestrator.py).
 
 ---
 
@@ -213,8 +247,10 @@ Current Price: `54.30 EUR`
 
 To keep real personal portfolio data private, use this structure:
 
-- `portfolio-template.csv` → shareable example or neutral configuration
-- `portfolio.csv` → local-only file containing real data
+- [config.example.json](config.example.json) → public template with placeholders
+- [config.json](config.json) → local-only file containing real settings and secrets
+- [portfolio-template.csv](portfolio-template.csv) → public sample file
+- [portfolio.csv](portfolio.csv) → local-only file with actual portfolio data
 - code and generic configuration → public and shareable
 
-The project uses `.gitignore` to exclude personal portfolio files, so sensitive data stays on the local machine.
+The project uses [.gitignore](.gitignore) to exclude local-only files, so sensitive data stays on the local machine.

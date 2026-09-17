@@ -1,0 +1,27 @@
+{
+  "csv_path": "portfolio-template.csv",
+  "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN",
+  "telegram_chat_id": "YOUR_TELEGRAM_CHAT_ID",
+  "enable_aggregation_workaround": true,
+  "target_config": {
+    "VWCE.MI": {
+      "target_weight": 55.0,
+      "type": "RELATIVE",
+      "threshold": 20.0
+    },
+    "VAGF.MI": {
+      "target_weight": 35.0,
+      "type": "RELATIVE",
+      "threshold": 20.0
+    },
+    "GOLD.MI": {
+      "target_weight": 10.0,
+      "type": "ABSOLUTE",
+      "threshold": 5.0
+    }
+  },
+  "workaround_bundles": {
+    "VAGF.MI": ["EGOV.MI", "XBLC.MI"],
+    "VWCE.MI": ["XDEM.MI", "MVOL.MI"]
+  }
+}

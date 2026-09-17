@@ -13,6 +13,10 @@ __pycache__/
 # Local config / secrets
 .env
 .env.*
+config.json
+config.local.json
+config.*.json
+!config.example.json
 
 # Personal portfolio data (keep private locally)
 portfolio.csv
