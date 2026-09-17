@@ -2,7 +2,17 @@
 
 from __future__ import annotations
 
-from .config import CSV_PATH, ENABLE_AGGREGATION_WORKAROUND, TARGET_CONFIG, WORKAROUND_BUNDLES
+from pathlib import Path
+
+from .config import (
+    BASE_DIR,
+    CSV_PATH,
+    ENABLE_AGGREGATION_WORKAROUND,
+    EXAMPLE_CSV_PATH,
+    TARGET_CONFIG,
+    USING_EXAMPLE_CONFIG,
+    WORKAROUND_BUNDLES,
+)
 from .market_data import fetch_prices_for_tickers
 from .portfolio_loader import calculate_quantities_from_csv
 from .rebalance_engine import build_summary_lines, evaluate_alerts
@@ -43,7 +53,27 @@ def apply_workaround_aggregation(
 def monitor_portfolio() -> None:
     """Run one portfolio valuation, threshold evaluation, and notification cycle."""
     allowed_tickers = get_allowed_tickers()
-    quantities = calculate_quantities_from_csv(CSV_PATH, allowed_tickers)
+    csv_path = CSV_PATH
+    if USING_EXAMPLE_CONFIG:
+        print(
+            "WARNING: using example configuration (config.example.json).\n"
+            "Create config.json with your personal settings before relying "
+            "on monitoring results."
+        )
+
+    if USING_EXAMPLE_CONFIG and not Path(csv_path).exists():
+        csv_path = str(EXAMPLE_CSV_PATH.relative_to(BASE_DIR))
+        print(
+            "WARNING: private portfolio CSV not found.\n"
+            f"Using sample data from '{csv_path}'. Create portfolio.csv "
+            "with your personal transactions."
+        )
+
+    try:
+        quantities = calculate_quantities_from_csv(csv_path, allowed_tickers)
+    except (OSError, ValueError) as exc:
+        print(f"Unable to read portfolio CSV '{csv_path}': {exc}")
+        return
 
     if not quantities:
         print("No active tickers matching the configuration were found in the CSV.")

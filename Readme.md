@@ -108,6 +108,9 @@ Place the portfolio data file in the project root. The script reads transaction 
 
 ### Required CSV format
 
+The loader requires these three columns and ignores any additional columns from
+broker exports:
+
 | Column Name | Type | Example | Description |
 | :--- | :--- | :--- | :--- |
 | `Symbol` | String | `VAGF.MI`, `XDPU.MI`, `XDEM.MI` | Yahoo Finance ticker symbol |
@@ -123,7 +126,12 @@ SPY.MI,50,BUY
 GOLD.MI,10,SELL
 ```
 
-> For this project, the real personal portfolio file can be kept local and untracked, while a public template can be shared.
+The checked-in [portfolio-template.csv](portfolio-template.csv) is an example
+broker export with additional price, date, and transaction metadata columns.
+Only `Symbol`, `Quantity`, and `Transaction Type` are used by the application.
+
+For this project, the real personal portfolio file can be kept local and
+untracked, while the public template can be shared.
 
 ---
 
@@ -138,6 +146,12 @@ Use the checked-in example as a starting point:
 - [config.example.json](config.example.json)
 
 This file is safe to commit because it contains placeholders only.
+
+If `config.json` is absent, the application uses this example configuration
+and emits a warning. If the configured private CSV is also unavailable, it
+uses `portfolio-template.csv` and emits another warning. Copy the example to
+`config.json`, then replace the placeholder values and create your private
+`portfolio.csv` before relying on monitoring results.
 
 ### 2. Private local config
 

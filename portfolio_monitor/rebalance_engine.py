@@ -44,27 +44,23 @@ def evaluate_alerts(
     """Create alerts for target allocations outside their configured ranges."""
     alerts: list[Alert] = []
 
-    for ticker, config in target_config.items():
+    for ticker, rule in build_target_rules(target_config).items():
         actual_value = portfolio_values.get(ticker, 0.0)
         actual_weight = (actual_value / total_portfolio_value) * 100.0
 
-        target_weight = float(config["target_weight"])
-        calc_mode = str(config["type"]).upper()
-        threshold = float(config["threshold"])
-
-        min_weight, max_weight = calculate_threshold_bounds(
-            target_weight=target_weight,
-            threshold=threshold,
-            calc_mode=calc_mode,
-        )
+        min_weight, max_weight = rule.min_weight, rule.max_weight
 
         if actual_weight < min_weight or actual_weight > max_weight:
-            mode_str = f"Relative {threshold}%" if calc_mode == "RELATIVE" else f"Absolute {threshold}%"
+            mode_str = (
+                f"Relative {rule.threshold}%"
+                if rule.calc_mode == "RELATIVE"
+                else f"Absolute {rule.threshold}%"
+            )
             alerts.append(
                 Alert(
                     ticker=ticker,
                     actual_weight=actual_weight,
-                    target_weight=target_weight,
+                    target_weight=rule.target_weight,
                     min_weight=min_weight,
                     max_weight=max_weight,
                     mode_str=mode_str,
