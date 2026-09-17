@@ -1,0 +1,30 @@
+# Virtual environment
+myenv/
+.venv/
+venv/
+env/
+
+# Python cache / build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Local config / secrets
+.env
+.env.*
+
+# Personal portfolio data (keep private locally)
+portfolio.csv
+portfolio_private.csv
+portfolio-*.csv
+!portfolio-template.csv
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
