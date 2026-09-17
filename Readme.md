@@ -1,5 +1,7 @@
 # Portfolio Rebalancing Monitor
 
+[![Unit tests](https://github.com/domds1/portfolio-monitor/actions/workflows/tests.yml/badge.svg)](https://github.com/domds1/portfolio-monitor/actions/workflows/tests.yml)
+
 A Python automation tool to monitor portfolio allocation from a transaction CSV, fetch the latest daily closing prices via Yahoo Finance, compare actual weights against target thresholds, and send Telegram alerts when rebalancing is needed.
 
 ---
