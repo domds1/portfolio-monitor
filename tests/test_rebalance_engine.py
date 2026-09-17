@@ -2,9 +2,12 @@
 
 import unittest
 
-from portfolio_monitor.config import TARGET_CONFIG
 from portfolio_monitor.models import TargetRule
-from portfolio_monitor.rebalance_engine import calculate_threshold_bounds, evaluate_alerts
+from portfolio_monitor.rebalance_engine import (
+    build_target_rules,
+    calculate_threshold_bounds,
+    evaluate_alerts,
+)
 
 
 class RebalanceEngineTests(unittest.TestCase):
@@ -70,10 +73,19 @@ class RebalanceEngineTests(unittest.TestCase):
         self.assertEqual(alerts[0].actual_weight, 0.0)
         self.assertEqual(alerts[0].direction, "🔻")
 
-    def test_target_config_is_loaded_and_has_expected_keys(self):
-        self.assertIn("VWCE.MI", TARGET_CONFIG)
-        self.assertIn("VAGF.MI", TARGET_CONFIG)
-        self.assertIn("GOLD.MI", TARGET_CONFIG)
+    def test_target_config_is_converted_to_target_rules(self):
+        rules = build_target_rules(
+            {
+                "TEST.MI": {
+                    "target_weight": 30.0,
+                    "type": "RELATIVE",
+                    "threshold": 20.0,
+                }
+            }
+        )
+
+        self.assertIn("TEST.MI", rules)
+        self.assertEqual(rules["TEST.MI"].calc_mode, "RELATIVE")
 
     def test_target_rule_normalizes_calculation_mode(self):
         rule = TargetRule(

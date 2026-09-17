@@ -49,7 +49,9 @@ def _merge_config(base: dict[str, Any], override: dict[str, Any]) -> dict[str, A
     """Recursively merge override values into a configuration mapping."""
     merged = base.copy()
     for key, value in override.items():
-        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+        if key in {"target_config", "workaround_bundles"}:
+            merged[key] = value
+        elif isinstance(value, dict) and isinstance(merged.get(key), dict):
             merged[key] = _merge_config(merged[key], value)
         else:
             merged[key] = value
