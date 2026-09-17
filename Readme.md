@@ -1,6 +1,9 @@
 # Portfolio Rebalancing Monitor
 
 [![Unit tests](https://github.com/domds1/portfolio-monitor/actions/workflows/tests.yml/badge.svg)](https://github.com/domds1/portfolio-monitor/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/domds1/portfolio-monitor/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/domds1/portfolio-monitor/actions/workflows/github-code-scanning/codeql)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/domds1/portfolio-monitor/blob/main/LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
 A Python automation tool to monitor portfolio allocation from a transaction CSV, fetch the latest daily closing prices via Yahoo Finance, compare actual weights against target thresholds, and send Telegram alerts when rebalancing is needed.
 
