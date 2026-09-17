@@ -19,7 +19,7 @@ def send_telegram_message(message: str) -> None:
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()
     except requests.exceptions.RequestException as exc:
-        print(f"Error sending Telegram message: {exc}")
+        raise RuntimeError("Error sending Telegram message") from exc
 
 
 def build_alert_message(alerts: list, summary_lines: list[str]) -> str:
@@ -30,7 +30,7 @@ def build_alert_message(alerts: list, summary_lines: list[str]) -> str:
     alert_lines = []
     for alert in alerts:
         alert_lines.append(
-            f"🔺 *{alert.ticker}*\n"
+            f"{alert.direction} *{alert.ticker}*\n"
             f"Current Weight: `{alert.actual_weight:.2f}%` (Target: `{alert.target_weight:.2f}%`)\n"
             f"Threshold Config: `{alert.mode_str}`\n"
             f"Allowed Range: `[{alert.min_weight:.2f}% - {alert.max_weight:.2f}%]`\n"

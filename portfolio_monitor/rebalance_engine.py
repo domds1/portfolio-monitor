@@ -40,10 +40,7 @@ def evaluate_alerts(
     alerts: list[Alert] = []
 
     for ticker, config in target_config.items():
-        if ticker not in portfolio_values:
-            continue
-
-        actual_value = portfolio_values[ticker]
+        actual_value = portfolio_values.get(ticker, 0.0)
         actual_weight = (actual_value / total_portfolio_value) * 100.0
 
         target_weight = float(config["target_weight"])

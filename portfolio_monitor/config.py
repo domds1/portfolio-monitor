@@ -13,9 +13,13 @@ def _load_json(path: Path) -> dict[str, Any]:
         return {}
     try:
         with path.open("r", encoding="utf-8") as config_file:
-            return json.load(config_file)
-    except (json.JSONDecodeError, OSError):
-        return {}
+            loaded = json.load(config_file)
+    except (json.JSONDecodeError, OSError) as exc:
+        raise ValueError(f"Unable to load configuration file '{path}'.") from exc
+
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Configuration file '{path}' must contain a JSON object.")
+    return loaded
 
 
 def _build_default_config() -> dict[str, Any]:
@@ -50,21 +54,6 @@ PRIVATE_CONFIG = _load_json(PRIVATE_CONFIG_PATH)
 EXAMPLE_CONFIG = _load_json(EXAMPLE_CONFIG_PATH)
 CONFIG = _merge_config(_build_default_config(), EXAMPLE_CONFIG)
 CONFIG = _merge_config(CONFIG, PRIVATE_CONFIG)
-
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", CONFIG.get("telegram_bot_token"))
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", CONFIG.get("telegram_chat_id"))
-CSV_PATH = os.getenv("CSV_PATH", CONFIG.get("csv_path", "portfolio.csv"))
-
-TARGET_CONFIG: dict[str, dict[str, Any]] = CONFIG.get("target_config", {})
-
-WORKAROUND_BUNDLES: dict[str, set[str]] = {
-    ticker: set(tickers)
-    for ticker, tickers in CONFIG.get("workaround_bundles", {}).items()
-}
-
-ENABLE_AGGREGATION_WORKAROUND = bool(
-    CONFIG.get("enable_aggregation_workaround", True)
-)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", CONFIG.get("telegram_bot_token"))
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", CONFIG.get("telegram_chat_id"))

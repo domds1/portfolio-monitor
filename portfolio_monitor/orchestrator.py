@@ -46,14 +46,17 @@ def monitor_portfolio() -> None:
 
     active_tickers = list(quantities.keys())
     prices = fetch_prices_for_tickers(active_tickers)
+    missing_prices = sorted(set(active_tickers) - set(prices))
+    if missing_prices:
+        print(f"Unable to value portfolio; missing prices for: {', '.join(missing_prices)}")
+        return
 
     portfolio_values: dict[str, float] = {}
     total_portfolio_value = 0.0
     for symbol, qty in quantities.items():
-        if symbol in prices:
-            value = qty * prices[symbol]
-            portfolio_values[symbol] = value
-            total_portfolio_value += value
+        value = qty * prices[symbol]
+        portfolio_values[symbol] = value
+        total_portfolio_value += value
 
     if total_portfolio_value == 0:
         print("Total portfolio value is zero.")
@@ -75,7 +78,11 @@ def monitor_portfolio() -> None:
 
     if alerts:
         message = build_alert_message(alerts, summary_lines)
-        send_telegram_message(message)
+        try:
+            send_telegram_message(message)
+        except (RuntimeError, ValueError) as exc:
+            print(f"Telegram alert was not sent: {exc}")
+            return
         print("Telegram alert sent successfully.")
     else:
         print("All monitored assets are within allowed threshold ranges.")

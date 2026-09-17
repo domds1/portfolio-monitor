@@ -1,6 +1,6 @@
 # Portfolio Rebalancing Monitor
 
-A Python automation tool to monitor portfolio allocation from a transaction CSV, fetch real-time market prices via Yahoo Finance, compare actual weights against target thresholds, and send Telegram alerts when rebalancing is needed.
+A Python automation tool to monitor portfolio allocation from a transaction CSV, fetch the latest daily closing prices via Yahoo Finance, compare actual weights against target thresholds, and send Telegram alerts when rebalancing is needed.
 
 ---
 
@@ -21,7 +21,7 @@ A Python automation tool to monitor portfolio allocation from a transaction CSV,
 ## Features
 
 - **Transaction-based balance tracking**: reads buy/sell operations from a CSV and computes net holdings per asset.
-- **Real-time market valuation**: queries Yahoo Finance (`yfinance`) for updated close prices.
+- **Market valuation**: queries Yahoo Finance (`yfinance`) for the latest available daily close prices.
 - **Flexible rebalancing logic**:
   - **Relative threshold**: compares percentage drift from the target allocation (for example, target 25% with a 20% relative threshold gives a valid range of `[20% - 30%]`).
   - **Absolute threshold**: compares fixed percentage-point deviation (for example, target 30% with a 5% absolute threshold gives a valid range of `[25% - 35%]`).

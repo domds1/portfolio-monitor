@@ -16,10 +16,9 @@ def fetch_prices_for_tickers(tickers: list[str]) -> dict[str, float]:
         try:
             close_data = data["Close"]
             if isinstance(close_data, pd.DataFrame):
-                if ticker in close_data.columns:
-                    close_series = close_data[ticker].dropna()
-                else:
-                    close_series = close_data.iloc[:, 0].dropna()
+                if ticker not in close_data.columns:
+                    continue
+                close_series = close_data[ticker].dropna()
             else:
                 close_series = close_data.dropna()
 
