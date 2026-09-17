@@ -1,3 +1,5 @@
+"""Define immutable data models used by the rebalance engine and notifications."""
+
 from dataclasses import dataclass
 
 
@@ -10,6 +12,7 @@ class TargetRule:
 
     @property
     def min_weight(self) -> float:
+        """Return the lowest allocation allowed by this target rule."""
         if self.calc_mode == "RELATIVE":
             delta = self.target_weight * (self.threshold / 100.0)
             return self.target_weight - delta
@@ -17,6 +20,7 @@ class TargetRule:
 
     @property
     def max_weight(self) -> float:
+        """Return the highest allocation allowed by this target rule."""
         if self.calc_mode == "RELATIVE":
             delta = self.target_weight * (self.threshold / 100.0)
             return self.target_weight + delta
@@ -35,4 +39,5 @@ class Alert:
 
     @property
     def direction(self) -> str:
+        """Return an upward or downward indicator based on the alert deviation."""
         return "🔺" if self.actual_weight > self.max_weight else "🔻"

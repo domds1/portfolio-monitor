@@ -1,3 +1,5 @@
+"""Test safe extraction of ticker prices from Yahoo Finance responses."""
+
 import unittest
 from unittest.mock import patch
 

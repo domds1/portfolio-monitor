@@ -1,3 +1,5 @@
+"""Calculate allocation thresholds and produce portfolio rebalance alerts."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -10,6 +12,7 @@ def calculate_threshold_bounds(
     threshold: float,
     calc_mode: str,
 ) -> tuple[float, float]:
+    """Calculate the minimum and maximum allowed allocation percentages."""
     calc_mode = calc_mode.upper()
     if calc_mode == "RELATIVE":
         delta = target_weight * (threshold / 100.0)
@@ -20,6 +23,7 @@ def calculate_threshold_bounds(
 
 
 def build_target_rules(target_config: dict[str, dict[str, Any]]) -> dict[str, TargetRule]:
+    """Convert raw target configuration dictionaries into typed target rules."""
     return {
         ticker: TargetRule(
             ticker=ticker,
@@ -37,6 +41,7 @@ def evaluate_alerts(
     total_portfolio_value: float,
     prices: dict[str, float],
 ) -> list[Alert]:
+    """Create alerts for target allocations outside their configured ranges."""
     alerts: list[Alert] = []
 
     for ticker, config in target_config.items():
@@ -75,6 +80,7 @@ def build_summary_lines(
     portfolio_values: dict[str, float],
     total_portfolio_value: float,
 ) -> list[str]:
+    """Build formatted allocation summary lines for notification messages."""
     lines: list[str] = []
     for ticker, config in target_config.items():
         actual_value = portfolio_values.get(ticker, 0.0)

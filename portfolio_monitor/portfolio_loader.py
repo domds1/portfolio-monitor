@@ -1,3 +1,5 @@
+"""Read transaction history and calculate net quantities per allowed ticker."""
+
 from __future__ import annotations
 
 from typing import Any

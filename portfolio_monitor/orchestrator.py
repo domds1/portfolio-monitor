@@ -1,3 +1,5 @@
+"""Coordinate portfolio loading, valuation, rebalance checks, and notifications."""
+
 from __future__ import annotations
 
 from .config import CSV_PATH, ENABLE_AGGREGATION_WORKAROUND, TARGET_CONFIG, WORKAROUND_BUNDLES
@@ -8,6 +10,7 @@ from .telegram_notifier import build_alert_message, send_telegram_message
 
 
 def get_allowed_tickers() -> set[str]:
+    """Return target tickers plus optional secondary aggregation tickers."""
     target_tickers = set(TARGET_CONFIG.keys())
     if not ENABLE_AGGREGATION_WORKAROUND:
         return target_tickers
@@ -23,6 +26,7 @@ def get_allowed_tickers() -> set[str]:
 def apply_workaround_aggregation(
     portfolio_values: dict[str, float],
 ) -> dict[str, float]:
+    """Fold configured secondary position values into their target tickers."""
     if not ENABLE_AGGREGATION_WORKAROUND:
         return portfolio_values
 
@@ -37,6 +41,7 @@ def apply_workaround_aggregation(
 
 
 def monitor_portfolio() -> None:
+    """Run one portfolio valuation, threshold evaluation, and notification cycle."""
     allowed_tickers = get_allowed_tickers()
     quantities = calculate_quantities_from_csv(CSV_PATH, allowed_tickers)
 

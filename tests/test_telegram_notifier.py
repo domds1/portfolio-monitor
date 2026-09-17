@@ -1,3 +1,5 @@
+"""Test Telegram delivery failures and alert message formatting."""
+
 import unittest
 from unittest.mock import patch
 

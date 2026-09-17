@@ -1,3 +1,5 @@
+"""Fetch and normalize latest daily closing prices from Yahoo Finance."""
+
 from __future__ import annotations
 
 import pandas as pd

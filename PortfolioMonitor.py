@@ -1,3 +1,5 @@
+"""Application entrypoint for running the portfolio monitor."""
+
 from portfolio_monitor.orchestrator import monitor_portfolio
 
 

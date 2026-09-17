@@ -1,3 +1,5 @@
+"""Format portfolio alerts and deliver them through the Telegram Bot API."""
+
 import requests
 
 from .config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID

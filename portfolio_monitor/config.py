@@ -1,3 +1,5 @@
+"""Load portfolio settings from public defaults, local JSON, and the environment."""
+
 import json
 import os
 from pathlib import Path
@@ -9,6 +11,7 @@ EXAMPLE_CONFIG_PATH = BASE_DIR / "config.example.json"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
+    """Load a JSON object from disk, returning an empty mapping when absent."""
     if not path.exists():
         return {}
     try:
@@ -23,6 +26,7 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 def _build_default_config() -> dict[str, Any]:
+    """Return the built-in configuration used when no template is available."""
     return {
         "csv_path": "portfolio.csv",
         "telegram_bot_token": None,
@@ -41,6 +45,7 @@ def _build_default_config() -> dict[str, Any]:
 
 
 def _merge_config(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Recursively merge override values into a configuration mapping."""
     merged = base.copy()
     for key, value in override.items():
         if isinstance(value, dict) and isinstance(merged.get(key), dict):

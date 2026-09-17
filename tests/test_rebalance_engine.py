@@ -1,3 +1,5 @@
+"""Test allocation threshold calculations and rebalance alert generation."""
+
 import unittest
 
 from portfolio_monitor.config import TARGET_CONFIG
