@@ -111,6 +111,12 @@ def monitor_portfolio() -> None:
         total_portfolio_value=total_portfolio_value,
     )
 
+    print("Current portfolio allocation:")
+    for ticker in TARGET_CONFIG:
+        actual_value = portfolio_values.get(ticker, 0.0)
+        actual_weight = (actual_value / total_portfolio_value) * 100.0
+        print(f"- {ticker}: {actual_weight:.2f}%")
+
     if alerts:
         message = build_alert_message(alerts, summary_lines)
         try:
